@@ -1,0 +1,6 @@
+@SmartCita.API_HostAddress = http://localhost:5029
+
+GET {{SmartCita.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

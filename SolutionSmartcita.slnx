@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="SmartCita.API/SmartCita.API.csproj" Id="5cfddf39-0f01-4317-ad6e-de13d5e41f40" />
+  <Project Path="SmartCita.Domain/SmartCita.Domain.csproj" Id="c8aac487-8999-4587-a7ef-5510a31bf041" />
+  <Project Path="SmartCita.Infrastructure/SmartCita.Infrastructure.csproj" Id="dd920fa6-a4a1-45b7-af36-a354daca8c54" />
+</Solution>
