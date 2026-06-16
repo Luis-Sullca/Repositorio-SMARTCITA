@@ -33,7 +33,7 @@ namespace SmartCita.Domain.Entities
         public string? MedicamentosActuales { get; set; }
         public string? HistorialMedico { get; set; }
 
-        public bool EstaActivo { get; set; } = true;
+        public bool EstaActivo { get; private set; } = true;
 
         // Relación de navegación: Un paciente tiene muchas citas
         // Se puede usar HashSet en vez de List para mejorar el rendimiento en ciertas operaciones, pero List es más común y fácil de usar
