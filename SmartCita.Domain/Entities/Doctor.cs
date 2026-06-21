@@ -9,10 +9,10 @@ namespace SmartCita.Domain.Entities
     {
         private Doctor() { }
 
-        public Doctor(string nombre, string apellido, string numeroColegiatura, EspecialidadMedica especialidad)
+        public Doctor(string nombre, string apellido, string numeroColegiatura, string universidadEgresado, EspecialidadMedica especialidad)
         {
             if (string.IsNullOrWhiteSpace(nombre)) throw new ArgumentException("El nombre es obligatorio");
-            if (string.IsNullOrWhiteSpace(apellido)) throw new ArgumentException("El apellido es obligatorio");
+            if (string.IsNullOrWhiteSpace(apellido)) throw new ArgumentException("El apellido es obligatorio"); 
             if (string.IsNullOrWhiteSpace(numeroColegiatura)) throw new ArgumentException("El número de colegiatura es obligatorio");
             if (!Enum.IsDefined(typeof(EspecialidadMedica), especialidad))
                 throw new ArgumentException("La especialidad médica seleccionada no es válida");
@@ -20,6 +20,7 @@ namespace SmartCita.Domain.Entities
             Nombre = nombre;
             Apellido = apellido;
             NumeroColegiatura = numeroColegiatura;
+            UniversidadEgresado = universidadEgresado;
             Especialidad = especialidad;
         }
 
@@ -28,7 +29,7 @@ namespace SmartCita.Domain.Entities
         public string Apellido { get; private set; } = string.Empty;
         public EspecialidadMedica Especialidad { get; private set; }
         public string NumeroColegiatura { get; private set; } = string.Empty;
-        public string UniversidadEgresado { get; set; } = string.Empty;
+        public string UniversidadEgresado { get; private set; } = string.Empty;
         public bool EstaActivo { get; set; } = true;
 
         // Relación de navegación: Un doctor tiene muchas citas

@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <Folder Include="Features\Citas\" />
-    <Folder Include="Features\Doctores\" />
     <Folder Include="Features\Horarios\" />
   </ItemGroup>
 

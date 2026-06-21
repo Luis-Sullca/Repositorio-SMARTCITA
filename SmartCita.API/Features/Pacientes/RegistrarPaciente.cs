@@ -76,7 +76,9 @@ namespace SmartCita.API.Features.Pacientes
 
             public async Task<Guid> Handle(Command request, CancellationToken cancellationToken)
             {
-                bool dniExistente = await _context.Pacientes.AnyAsync(p => p.Dni == request.Dni, cancellationToken);
+                bool dniExistente = await _context.Pacientes
+                    .AnyAsync(p => p.Dni == request.Dni, cancellationToken);
+                    
                 if (dniExistente)
                 {
                     throw new InvalidOperationException("Ya existe un paciente registrado con el mismo DNI.");
