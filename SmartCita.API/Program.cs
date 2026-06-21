@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using SmartCita.API.Common.Behaviors;
+using SmartCita.API.Common.Endpoints;
 using SmartCita.Infrastructure.Persistence;
 using System.Reflection;
 
@@ -62,11 +63,12 @@ app.UseExceptionHandler();
 
 // Aqui irán las llamadas a los endpoints de tus 'Vertical Slice'
 
-SmartCita.API.Features.Pacientes.RegistrarPaciente.MapEndPoint(app);
+var endpointTypes = assembly.GetTypes()
+    .Where(t => t.GetInterfaces().Contains(typeof(IEndpoint)) && !t.IsInterface && !t.IsAbstract);
+
+foreach (var type in endpointTypes)
+{
+    type.GetMethod(nameof(IEndpoint.MapEndpoint))?.Invoke(null, [app]);
+}
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

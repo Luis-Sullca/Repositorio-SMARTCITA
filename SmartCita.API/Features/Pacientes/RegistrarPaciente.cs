@@ -3,26 +3,13 @@ using MediatR;
 using SmartCita.Domain.Entities;
 using SmartCita.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using SmartCita.API.Common.Endpoints;
 
 namespace SmartCita.API.Features.Pacientes
 {
-    public class RegistrarPaciente
+    public class RegistrarPaciente : IEndpoint
     {
-        /// <summary>
-        /// Comando para registrar un nuevo paciente en el sistema. 
-        /// Contiene toda la información necesaria para crear un nuevo registro de paciente, 
-        /// incluyendo datos personales, información de contacto y detalles médicos relevantes.
-        /// </summary>
-        /// <param name="Nombres">Nombres del paciente.</param>
-        /// <param name="Apellidos">Apellidos del paciente.</param>
-        /// <param name="Dni">Documento Nacional de Identidad del paciente.</param>
-        /// <param name="FechaNacimiento">Fecha de nacimiento del paciente.</param>
-        /// <param name="Telefono"></param>
-        /// <param name="Email"></param>
-        /// <param name="Alergias"></param>
-        /// <param name="MedicamentosActuales"></param>
-        /// <param name="HistorialMedico"></param>
-
         public record Command
             (
             string Nombres,
@@ -49,11 +36,10 @@ namespace SmartCita.API.Features.Pacientes
 
                 // Reglas exactas para el DNI: es obligatorio, no puede estar vacío y debe tener un máximo de 8 caracteres
                 RuleFor(x => x.Dni)
-                    .NotEmpty()
-                    .Length(8)
-                    .WithMessage("El DNI debe contener exactamente 8 digitos")
-                    .Matches("^[0-9]*$")
-                    .WithMessage("El DNI debe contener solo numeros");
+                    .Cascade(CascadeMode.Stop)
+                    .NotEmpty().WithMessage("El DNI es obligatorio")
+                    .Length(8).WithMessage("El DNI debe contener exactamente 8 dígitos")
+                    .Matches(@"^\d+$").WithMessage("El DNI debe contener solo números");
 
                 RuleFor(x => x.FechaNacimiento)
                     .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
@@ -103,13 +89,14 @@ namespace SmartCita.API.Features.Pacientes
                     request.Apellidos,
                     request.Dni,
                     request.FechaNacimiento
-                );
-
-                nuevoPaciente.Telefono = request.Telefono;
-                nuevoPaciente.Email = request.Email;
-                nuevoPaciente.Alergias = request.Alergias;
-                nuevoPaciente.MedicamentosActuales = request.MedicamentosActuales;
-                nuevoPaciente.HistorialMedico = request.HistorialMedico;
+                )
+                {
+                    Telefono = request.Telefono,
+                    Email = request.Email,
+                    Alergias = request.Alergias,
+                    MedicamentosActuales = request.MedicamentosActuales,
+                    HistorialMedico = request.HistorialMedico
+                };
 
                 _context.Pacientes.Add(nuevoPaciente);
                 await _context.SaveChangesAsync(cancellationToken);
@@ -122,7 +109,7 @@ namespace SmartCita.API.Features.Pacientes
         /// Método para mapear el endpoint de registrar paciente en la aplicación.
         /// </summary>
         /// <param name="app">El constructor de rutas de la aplicación.</param>
-        public static void MapEndPoint(IEndpointRouteBuilder app)
+        public static void MapEndpoint(IEndpointRouteBuilder app)
         {
             app.MapPost("/api/pacientes", async (Command command, IMediator mediator) =>
             {
@@ -133,7 +120,7 @@ namespace SmartCita.API.Features.Pacientes
                 }
                 catch (InvalidOperationException ex)
                 {
-                    return Results.BadRequest(new { Error = ex.Message });
+                    return Results.Conflict(new { Error = ex.Message });
                 }
             })
             .WithTags("Pacientes")

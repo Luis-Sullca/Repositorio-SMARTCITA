@@ -6,22 +6,14 @@ namespace SmartCita.API.Common.Exceptions
 {
     public class GlobalExceptionHandler : IExceptionHandler
     {
-        /// <summary>
-        /// Maneja las excepciones de manera global en la aplicación. 
-        /// Dependiendo del tipo de excepción, asigna un código de estado HTTP adecuado 
-        /// y devuelve una respuesta JSON con detalles del error.
-        /// </summary>
-        /// <param name="httpContext">El contexto HTTP de la solicitud actual.</param>
-        /// <param name="exception">La excepción que se ha producido.</param>
-        /// <param name="cancellationToken">Token de cancelación para operaciones asincrónicas.</param>
-        /// <returns>Un valor booleano que indica si la excepción fue manejada.</returns>
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
             var statusCode = exception switch
             {
                 ValidationException => StatusCodes.Status400BadRequest,
+                ArgumentException => StatusCodes.Status400BadRequest,
                 KeyNotFoundException => StatusCodes.Status404NotFound,
-                InvalidOperationException => StatusCodes.Status400BadRequest,
+                InvalidOperationException => StatusCodes.Status409Conflict,
                 _ => StatusCodes.Status500InternalServerError
             };
 
